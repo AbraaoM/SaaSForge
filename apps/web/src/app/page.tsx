@@ -1,5 +1,5 @@
-import { SaaSForgeDashboard } from "@/components/dashboard/saas-forge-dashboard";
+import { StarterKitOverview } from "@/components/starter-kit/starter-kit-overview";
 
 export default function Home() {
-  return <SaaSForgeDashboard />;
+  return <StarterKitOverview />;
 }

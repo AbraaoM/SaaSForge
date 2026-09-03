@@ -1,36 +1,40 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# SaaS Forge Web
 
-## Getting Started
+Aplicação Next.js que concentra a base de autenticação, organizações, assinatura e checkout dos produtos SaaS.
 
-First, run the development server:
+## Configuração local
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+```sh
+cp .env.example .env.local
+bun run db:generate
+bun run db:migrate
+bun run dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Preencha `DATABASE_URL` com a connection string pooled do Neon. Gere `BETTER_AUTH_SECRET` com pelo menos 32 caracteres e mantenha todas as chaves apenas no ambiente local ou no provedor de deploy.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Provedores
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+Better Auth atende em `/api/auth/[...all]`, com senha/e-mail, confirmação via Resend e organizações. A organização ativa é armazenada na sessão; Services devem obter o contexto com `OrganizationAccessService.requireActiveOrganization()` e nunca receber `organizationId` confiável do cliente.
 
-## Learn More
+Para Stripe, crie os preços recorrentes Starter e Pro e preencha os respectivos `STRIPE_*_PRICE_ID`. Cadastre o endpoint HTTPS `/api/webhooks/stripe` no Dashboard Stripe e informe o secret gerado em `STRIPE_WEBHOOK_SECRET`.
 
-To learn more about Next.js, take a look at the following resources:
+Para AbacatePay, crie os produtos recorrentes Starter e Pro, preencha os respectivos `ABACATEPAY_*_PRODUCT_ID` e cadastre `https://seu-dominio/api/webhooks/abacatepay` para eventos `subscription.completed`, `subscription.renewed` e `subscription.cancelled`. Configure o mesmo secret em `ABACATEPAY_WEBHOOK_SECRET`; o endpoint exige o header `X-Webhook-Signature` HMAC-SHA256.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+O checkout autenticado recebe `POST /api/billing/checkout` com:
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+```json
+{ "provider": "stripe", "plan": "pro" }
+```
 
-## Deploy on Vercel
+A resposta contém uma URL hospedada do provedor. Webhooks são a única fonte que altera o estado de uma assinatura; eventos duplicados são descartados por uma constraint única em `payment_event`.
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## Comandos
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+```sh
+bun run lint
+bun run test
+bun run build
+bun run db:generate
+bun run db:migrate
+```

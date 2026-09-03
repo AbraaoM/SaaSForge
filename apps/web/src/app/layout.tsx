@@ -16,7 +16,7 @@ const geistMono = Geist_Mono({
 
 export const metadata: Metadata = {
   title: "SaaS Forge",
-  description: "A base operacional para construir produtos SaaS.",
+  description: "Starter kit para iniciar um SaaS com uma base segura e reutilizável.",
 };
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
