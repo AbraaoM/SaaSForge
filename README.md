@@ -70,90 +70,52 @@ bun exec turbo build --filter=docs
 
 ### Develop
 
-To develop all apps and packages, run the following command:
+# SaaS Forge
 
-With [global `turbo`](https://turborepo.dev/docs/getting-started/installation#global-installation) installed (recommended):
+Base monorepo para criar e operar produtos SaaS com uma arquitetura simples, segura e reutilizável.
 
-```sh
-cd my-turborepo
-turbo dev
+## Stack
+
+- Bun e Turborepo
+- Next.js com App Router e TypeScript
+- Mantine para a interface
+- PostgreSQL/Neon e Drizzle para dados
+- Better Auth para autenticação
+- Stripe e AbacatePay para cobrança
+- Zod para validação e Vitest para testes
+
+## Estrutura
+
+```text
+apps/
+	web/                  Aplicação inicial e painel operacional
+packages/
+	eslint-config/        Configuração compartilhada de lint
+	typescript-config/    Configurações TypeScript compartilhadas
 ```
 
-Without global `turbo`, use your package manager:
+No `web`, mantenha as responsabilidades em `src/app`, `src/controllers`, `src/services`, `src/models`, `src/components` e `src/lib`. Regras de negócio, autorização, isolamento por organização e cobrança vivem em Services; páginas e Controllers apenas compõem e encaminham o fluxo.
+
+## Desenvolvimento
 
 ```sh
-cd my-turborepo
-npx turbo dev
-bun exec turbo dev
-bun exec turbo dev
+bun install
+bun run dev --filter=web
 ```
 
-You can develop a specific package by using a [filter](https://turborepo.dev/docs/crafting-your-repository/running-tasks#using-filters):
-
-With [global `turbo`](https://turborepo.dev/docs/getting-started/installation#global-installation) installed:
+O painel estará disponível em `http://localhost:3000`. Para rodar somente o app web:
 
 ```sh
-turbo dev --filter=web
+cd apps/web
+bun run dev
 ```
 
-Without global `turbo`:
+## Verificação
 
 ```sh
-npx turbo dev --filter=web
-bun exec turbo dev --filter=web
-bun exec turbo dev --filter=web
+bun run lint
+bun run build
 ```
 
-### Remote Caching
-
-> [!TIP]
-> Vercel Remote Cache is free for all plans. Get started today at [vercel.com](https://vercel.com/signup?utm_source=remote-cache-sdk&utm_campaign=free_remote_cache).
-
-Turborepo can use a technique known as [Remote Caching](https://turborepo.dev/docs/core-concepts/remote-caching) to share cache artifacts across machines, enabling you to share build caches with your team and CI/CD pipelines.
-
-By default, Turborepo will cache locally. To enable Remote Caching you will need an account with Vercel. If you don't have an account you can [create one](https://vercel.com/signup?utm_source=turborepo-examples), then enter the following commands:
-
-With [global `turbo`](https://turborepo.dev/docs/getting-started/installation#global-installation) installed (recommended):
-
-```sh
-cd my-turborepo
-turbo login
+Antes de criar uma funcionalidade de produto, modele os dados e sua validação em `models`, crie o caso de uso em `services`, exponha-o por um Controller e componha a interface com Mantine. Toda entidade pertencente a uma organização deve ser consultada e alterada com `organizationId` obtido da sessão confiável.
 ```
-
-Without global `turbo`, use your package manager:
-
-```sh
-cd my-turborepo
-npx turbo login
-bun exec turbo login
-bun exec turbo login
-```
-
-This will authenticate the Turborepo CLI with your [Vercel account](https://vercel.com/docs/concepts/personal-accounts/overview).
-
-Next, you can link your Turborepo to your Remote Cache by running the following command from the root of your Turborepo:
-
-With [global `turbo`](https://turborepo.dev/docs/getting-started/installation#global-installation) installed:
-
-```sh
-turbo link
-```
-
-Without global `turbo`:
-
-```sh
-npx turbo link
-bun exec turbo link
-bun exec turbo link
-```
-
-## Useful Links
-
-Learn more about the power of Turborepo:
-
-- [Tasks](https://turborepo.dev/docs/crafting-your-repository/running-tasks)
-- [Caching](https://turborepo.dev/docs/crafting-your-repository/caching)
-- [Remote Caching](https://turborepo.dev/docs/core-concepts/remote-caching)
-- [Filtering](https://turborepo.dev/docs/crafting-your-repository/running-tasks#using-filters)
-- [Configuration Options](https://turborepo.dev/docs/reference/configuration)
-- [CLI Usage](https://turborepo.dev/docs/reference/command-line-reference)

@@ -1,5 +1,5 @@
 {
-  "name": "saasforge-turbo",
+  "name": "saas-forge",
   "private": true,
   "scripts": {
     "build": "turbo run build",
