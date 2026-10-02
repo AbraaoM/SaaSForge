@@ -21,6 +21,7 @@ import { OrganizationAccessService } from "@/services/organization-access-servic
 describe("OrganizationAccessService", () => {
   beforeEach(() => {
     vi.clearAllMocks();
+    mocks.session = null;
     mocks.getSession.mockImplementation(async () => mocks.session);
     mocks.limit.mockResolvedValue([]);
     const query = {

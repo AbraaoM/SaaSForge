@@ -17,6 +17,8 @@ Preencha `DATABASE_URL` com a connection string pooled do Neon. Gere `BETTER_AUT
 
 Better Auth atende em `/api/auth/[...all]`, com senha/e-mail, confirmação via Resend e organizações. A organização ativa é armazenada na sessão; Services devem obter o contexto com `OrganizationAccessService.requireActiveOrganization()` e nunca receber `organizationId` confiável do cliente.
 
+O login também oferece recuperação de senha: a solicitação envia um link pelo Resend e a nova senha é definida em `/reset-password`. Configure `EMAIL_FROM` e `RESEND_API_KEY` para entregar as mensagens.
+
 Para Stripe, crie os preços recorrentes Starter e Pro e preencha os respectivos `STRIPE_*_PRICE_ID`. Cadastre o endpoint HTTPS `/api/webhooks/stripe` no Dashboard Stripe e informe o secret gerado em `STRIPE_WEBHOOK_SECRET`.
 
 Para AbacatePay, crie os produtos recorrentes Starter e Pro, preencha os respectivos `ABACATEPAY_*_PRODUCT_ID` e cadastre `https://seu-dominio/api/webhooks/abacatepay` para eventos `subscription.completed`, `subscription.renewed` e `subscription.cancelled`. Configure o mesmo secret em `ABACATEPAY_WEBHOOK_SECRET`; o endpoint exige o header `X-Webhook-Signature` HMAC-SHA256.
@@ -38,3 +40,5 @@ bun run build
 bun run db:generate
 bun run db:migrate
 ```
+
+Os testes cobrem validação de autenticação e organização, fluxos de login/cadastro/recuperação, envio do e-mail de redefinição, isolamento de organização, checkout, acesso por status da assinatura e processamento idempotente de webhooks.
