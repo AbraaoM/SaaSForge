@@ -2,22 +2,13 @@
 
 import { useState } from "react";
 
-import { Alert, Button, Paper, PasswordInput, Stack, Tabs, TextInput, Title } from "@mantine/core";
+import { Alert, Anchor, Button, Paper, PasswordInput, Stack, Tabs, TextInput, Title } from "@mantine/core";
 import { useForm } from "@mantine/form";
 import { zod4Resolver } from "mantine-form-zod-resolver";
-import { z } from "zod";
 
-import { authClient } from "@/lib/auth-client";
-
-const signInSchema = z.object({
-  email: z.email("Informe um e-mail válido."),
-  password: z.string().min(1, "Informe sua senha."),
-});
-
-const signUpSchema = signInSchema.extend({
-  name: z.string().min(2, "Informe seu nome."),
-  password: z.string().min(8, "Use pelo menos 8 caracteres."),
-});
+import { signInWithEmail, signUpWithEmail } from "@/lib/auth-flows";
+import { signInSchema, signUpSchema } from "@/models/auth";
+import type { z } from "zod";
 
 export function LoginForm() {
   const [error, setError] = useState<string | null>(null);
@@ -26,13 +17,13 @@ export function LoginForm() {
 
   async function signIn(values: z.infer<typeof signInSchema>) {
     setError(null);
-    const result = await authClient.signIn.email({ ...values, callbackURL: "/" });
+    const result = await signInWithEmail(values);
     if (result.error) setError("Não foi possível entrar com estas credenciais.");
   }
 
   async function signUp(values: z.infer<typeof signUpSchema>) {
     setError(null);
-    const result = await authClient.signUp.email({ ...values, callbackURL: "/onboarding" });
+    const result = await signUpWithEmail(values);
     if (result.error) setError("Não foi possível criar a conta.");
   }
 
@@ -50,6 +41,7 @@ export function LoginForm() {
             <Stack gap="md">
               <TextInput label="E-mail" type="email" required {...signInForm.getInputProps("email")} />
               <PasswordInput label="Senha" required {...signInForm.getInputProps("password")} />
+              <Anchor href="/forgot-password" size="sm">Esqueceu sua senha?</Anchor>
               <Button type="submit" color="dark" radius="sm">Entrar</Button>
             </Stack>
           </form>

@@ -6,7 +6,7 @@ import { organization } from "better-auth/plugins";
 
 import { getDb } from "@/lib/db";
 import { getAuthEnv } from "@/lib/env";
-import { sendVerificationEmail } from "@/lib/email";
+import { sendPasswordResetEmail, sendVerificationEmail } from "@/lib/email";
 import {
   users,
   sessions,
@@ -38,6 +38,7 @@ export const auth = betterAuth({
   emailAndPassword: {
     enabled: true,
     requireEmailVerification: true,
+    sendResetPassword: async ({ user, url }) => sendPasswordResetEmail(user.email, url),
   },
   emailVerification: {
     sendVerificationEmail: async ({ user, url }) => sendVerificationEmail(user.email, url),
