@@ -130,7 +130,7 @@ describe("BillingService", () => {
           cancel_at_period_end: false,
         },
       },
-    } as Stripe.Event;
+    } as unknown as Stripe.Event;
 
     await BillingService.handleStripeEvent(event);
 
@@ -155,7 +155,7 @@ describe("BillingService", () => {
           cancel_at_period_end: false,
         },
       },
-    } as Stripe.Event;
+    } as unknown as Stripe.Event;
 
     await BillingService.handleStripeEvent(event);
 
